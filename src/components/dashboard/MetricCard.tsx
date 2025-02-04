@@ -5,6 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
@@ -16,7 +17,6 @@ interface MetricCardProps {
     value: number;
     isPositive: boolean;
   };
-  onClick?: () => void;
 }
 
 export const MetricCard = ({
@@ -25,15 +25,23 @@ export const MetricCard = ({
   icon,
   description,
   trend,
-  onClick,
 }: MetricCardProps) => {
+  const { toast } = useToast();
+
+  const handleClick = () => {
+    toast({
+      title: `${title}`,
+      description: `Detalhes sobre ${title.toLowerCase()}: ${value}`,
+      duration: 3000,
+    });
+  };
+
   return (
     <Card
       className={cn(
-        "transition-all duration-200 hover:shadow-md",
-        onClick && "cursor-pointer hover:scale-105"
+        "transition-all duration-200 hover:shadow-md hover:scale-105 cursor-pointer"
       )}
-      onClick={onClick}
+      onClick={handleClick}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">

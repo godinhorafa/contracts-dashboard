@@ -10,11 +10,10 @@ import { contracts } from "@/data/contracts";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { ContractsTable } from "@/components/dashboard/ContractsTable";
-import { useToast } from "@/components/ui/use-toast";
+import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 
 const Index = () => {
-  const { toast } = useToast();
-
+  // Cálculos das métricas
   const totalContracts = contracts.length;
   const activeContracts = contracts.filter((c) => c.Status === "Ativo").length;
   const nearExpiryContracts = contracts.filter(
@@ -40,14 +39,9 @@ const Index = () => {
     (activeContracts / (activeContracts + expiredContracts)) *
     100
   ).toFixed(1);
+
   // Cálculo do valor médio dos contratos
   const averageValue = (totalValue / activeContracts).toFixed(2);
-  const handleMetricClick = (metricName: string) => {
-    toast({
-      title: `Detalhes - ${metricName}`,
-      description: "Em breve: mais detalhes sobre esta métrica",
-    });
-  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -62,7 +56,6 @@ const Index = () => {
               value={totalContracts}
               icon={<FileText />}
               description="Número total de contratos cadastrados no sistema"
-              onClick={() => handleMetricClick("Total de Contratos")}
               trend={{ value: 5, isPositive: true }}
             />
             <MetricCard
@@ -70,7 +63,6 @@ const Index = () => {
               value={activeContracts}
               icon={<Users />}
               description="Contratos atualmente em vigor"
-              onClick={() => handleMetricClick("Contratos Ativos")}
               trend={{ value: 2, isPositive: true }}
             />
             <MetricCard
@@ -78,7 +70,6 @@ const Index = () => {
               value={nearExpiryContracts}
               icon={<AlertTriangle />}
               description="Contratos que vencem nos próximos 30 dias"
-              onClick={() => handleMetricClick("Próximos ao Vencimento")}
               trend={{ value: 3, isPositive: false }}
             />
             <MetricCard
@@ -86,7 +77,6 @@ const Index = () => {
               value={`R$ ${totalValue.toLocaleString("pt-BR")}`}
               icon={<DollarSign />}
               description="Soma do valor de todos os contratos ativos"
-              onClick={() => handleMetricClick("Valor Total")}
               trend={{ value: 8, isPositive: true }}
             />
             <MetricCard
@@ -94,7 +84,6 @@ const Index = () => {
               value={`${renewalRate}%`}
               icon={<PercentIcon />}
               description="Percentual de contratos ativos em relação ao total"
-              onClick={() => handleMetricClick("Taxa de Renovação")}
               trend={{ value: 1.5, isPositive: true }}
             />
             <MetricCard
@@ -102,12 +91,15 @@ const Index = () => {
               value={`R$ ${parseFloat(averageValue).toLocaleString("pt-BR")}`}
               icon={<Clock />}
               description="Valor médio dos contratos ativos"
-              onClick={() => handleMetricClick("Valor Médio")}
               trend={{ value: 4, isPositive: true }}
             />
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
+          <div className="mb-8">
+            <DashboardCharts />
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Lista de Contratos</h2>
             <ContractsTable contracts={contracts} />
           </div>
