@@ -28,9 +28,13 @@ import { ArrowUpDown } from "lucide-react";
 
 interface ContractsTableProps {
   contracts: Contract[];
+  onRowClick?: (contract: Contract) => void;
 }
 
-export const ContractsTable = ({ contracts }: ContractsTableProps) => {
+export const ContractsTable = ({
+  contracts,
+  onRowClick,
+}: ContractsTableProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<keyof Contract | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -152,7 +156,11 @@ export const ContractsTable = ({ contracts }: ContractsTableProps) => {
           </TableHeader>
           <TableBody>
             {paginatedContracts.map((contract) => (
-              <TableRow key={contract.Identificador}>
+              <TableRow
+                key={contract.Identificador}
+                onClick={() => onRowClick?.(contract)}
+                className="cursor-pointer hover:bg-muted/60"
+              >
                 <TableCell>{contract.Identificador}</TableCell>
                 <TableCell>{contract["Nome do Contrato"]}</TableCell>
                 <TableCell>{contract["Cliente/Fornecedor"]}</TableCell>

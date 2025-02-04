@@ -11,6 +11,10 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { Contract } from "@/types/contract";
+interface DashboardChartsProps {
+  contracts: Contract[];
+}
 
 const monthlyData = [
   { month: "Jan", ativos: 40, expirados: 5, renovados: 35 },
@@ -30,7 +34,7 @@ const valueData = [
   { month: "Jun", valor: 240000 },
 ];
 
-export const DashboardCharts = () => {
+export const DashboardCharts = ({ contracts }: DashboardChartsProps) => {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <Card>

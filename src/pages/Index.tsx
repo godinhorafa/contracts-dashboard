@@ -15,11 +15,16 @@ import { ContractsTable } from "@/components/dashboard/ContractsTable";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { Button } from "@/components/ui/button";
 import { AddContractModal } from "@/components/contracts/AddContractModal";
+import { ContractDetailsModal } from "@/components/contracts/ContractDetailsModal";
 import { Contract } from "@/types/contract";
 
 const Index = () => {
   const [contracts, setContracts] = useState<Contract[]>(initialContracts);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedContract, setSelectedContract] = useState<Contract | null>(
+    null
+  );
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
   // Cálculos das métricas
   const totalContracts = contracts.length;
@@ -38,6 +43,11 @@ const Index = () => {
       );
       return acc + value;
     }, 0);
+
+  const handleRowClick = (contract: Contract) => {
+    setSelectedContract(contract);
+    setIsDetailsModalOpen(true);
+  };
 
   // Cálculo da taxa de renovação
   const expiredContracts = contracts.filter(
@@ -119,8 +129,17 @@ const Index = () => {
 
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Lista de Contratos</h2>
-            <ContractsTable contracts={contracts} />
+            <ContractsTable contracts={contracts} onRowClick={handleRowClick} />
           </div>
+
+          <ContractDetailsModal
+            contract={selectedContract}
+            isOpen={isDetailsModalOpen}
+            onClose={() => {
+              setIsDetailsModalOpen(false);
+              setSelectedContract(null);
+            }}
+          />
         </div>
       </main>
 
