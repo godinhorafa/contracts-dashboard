@@ -5,14 +5,22 @@ import {
   DollarSign,
   Clock,
   PercentIcon,
+  Plus,
 } from "lucide-react";
-import { contracts } from "@/data/contracts";
+import { useState } from "react";
+import { contracts as initialContracts } from "@/data/contracts";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { ContractsTable } from "@/components/dashboard/ContractsTable";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
+import { Button } from "@/components/ui/button";
+import { AddContractModal } from "@/components/contracts/AddContractModal";
+import { Contract } from "@/types/contract";
 
 const Index = () => {
+  const [contracts, setContracts] = useState<Contract[]>(initialContracts);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   // Cálculos das métricas
   const totalContracts = contracts.length;
   const activeContracts = contracts.filter((c) => c.Status === "Ativo").length;
@@ -43,12 +51,22 @@ const Index = () => {
   // Cálculo do valor médio dos contratos
   const averageValue = (totalValue / activeContracts).toFixed(2);
 
+  const handleAddContract = (newContract: Contract) => {
+    setContracts((prev) => [...prev, newContract]);
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar />
       <main className="flex-1 p-8 overflow-auto">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Dashboard de Contratos</h1>
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold">Dashboard de Contratos</h1>
+            <Button onClick={() => setIsAddModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Adicionar Contrato
+            </Button>
+          </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-8">
             <MetricCard
@@ -96,7 +114,7 @@ const Index = () => {
           </div>
 
           <div className="mb-8">
-            <DashboardCharts />
+            <DashboardCharts contracts={contracts} />
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
@@ -105,6 +123,12 @@ const Index = () => {
           </div>
         </div>
       </main>
+
+      <AddContractModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddContract={handleAddContract}
+      />
     </div>
   );
 };
