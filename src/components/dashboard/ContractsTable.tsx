@@ -8,14 +8,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import {
   Pagination,
   PaginationContent,
   PaginationItem,
@@ -25,6 +17,7 @@ import {
 } from "@/components/ui/pagination";
 import { Contract } from "@/types/contract";
 import { ArrowUpDown } from "lucide-react";
+import { useFilters } from "@/contexts/FilterContext";
 
 interface ContractsTableProps {
   contracts: Contract[];
@@ -38,22 +31,12 @@ export const ContractsTable = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<keyof Contract | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [searchTerm, setSearchTerm] = useState("");
+  const { filterContracts } = useFilters();
 
   const itemsPerPage = 5;
 
-  // Filtrar contratos
-  const filteredContracts = contracts.filter((contract) => {
-    const matchesStatus =
-      statusFilter === "all" || contract.Status === statusFilter;
-    const matchesSearch =
-      searchTerm === "" ||
-      Object.values(contract).some((value) =>
-        value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    return matchesStatus && matchesSearch;
-  });
+  // Filtrar contratos usando o contexto global
+  const filteredContracts = filterContracts(contracts);
 
   // Ordenar contratos
   const sortedContracts = [...filteredContracts].sort((a, b) => {
@@ -88,30 +71,6 @@ export const ContractsTable = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Input
-            placeholder="Pesquisar..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-xs"
-          />
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filtrar por status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os status</SelectItem>
-              <SelectItem value="Ativo">Ativo</SelectItem>
-              <SelectItem value="Expirado">Expirado</SelectItem>
-              <SelectItem value="Próximo ao Vencimento">
-                Próximo ao Vencimento
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
       <div className="rounded-md border">
         <Table>
           <TableHeader>

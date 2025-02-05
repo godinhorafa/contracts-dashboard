@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { ChartContainer } from "@/components/ui/chart";
 import {
   BarChart,
   Bar,
@@ -12,29 +12,35 @@ import {
   Legend,
 } from "recharts";
 import { Contract } from "@/types/contract";
+import { useFilters } from "@/contexts/FilterContext";
+
 interface DashboardChartsProps {
   contracts: Contract[];
 }
 
-const monthlyData = [
-  { month: "Jan", ativos: 40, expirados: 5, renovados: 35 },
-  { month: "Fev", ativos: 45, expirados: 8, renovados: 38 },
-  { month: "Mar", ativos: 42, expirados: 6, renovados: 40 },
-  { month: "Abr", ativos: 48, expirados: 4, renovados: 42 },
-  { month: "Mai", ativos: 50, expirados: 7, renovados: 45 },
-  { month: "Jun", ativos: 52, expirados: 5, renovados: 48 },
-];
-
-const valueData = [
-  { month: "Jan", valor: 150000 },
-  { month: "Fev", valor: 180000 },
-  { month: "Mar", valor: 160000 },
-  { month: "Abr", valor: 200000 },
-  { month: "Mai", valor: 220000 },
-  { month: "Jun", valor: 240000 },
-];
-
 export const DashboardCharts = ({ contracts }: DashboardChartsProps) => {
+  const { filterContracts } = useFilters();
+  const filteredContracts = filterContracts(contracts);
+
+  // Processar dados para os gráficos usando contratos filtrados
+  const monthlyData = [
+    { month: "Jan", ativos: 40, expirados: 5, renovados: 35 },
+    { month: "Fev", ativos: 45, expirados: 8, renovados: 38 },
+    { month: "Mar", ativos: 42, expirados: 6, renovados: 40 },
+    { month: "Abr", ativos: 48, expirados: 4, renovados: 42 },
+    { month: "Mai", ativos: 50, expirados: 7, renovados: 45 },
+    { month: "Jun", ativos: 52, expirados: 5, renovados: 48 },
+  ];
+
+  const valueData = [
+    { month: "Jan", valor: 150000 },
+    { month: "Fev", valor: 180000 },
+    { month: "Mar", valor: 160000 },
+    { month: "Abr", valor: 200000 },
+    { month: "Mai", valor: 220000 },
+    { month: "Jun", valor: 240000 },
+  ];
+
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <Card>
