@@ -23,23 +23,89 @@ export const DashboardCharts = ({ contracts }: DashboardChartsProps) => {
   const filteredContracts = filterContracts(contracts);
 
   // Processar dados para os gráficos usando contratos filtrados
-  const monthlyData = [
-    { month: "Jan", ativos: 40, expirados: 5, renovados: 35 },
-    { month: "Fev", ativos: 45, expirados: 8, renovados: 38 },
-    { month: "Mar", ativos: 42, expirados: 6, renovados: 40 },
-    { month: "Abr", ativos: 48, expirados: 4, renovados: 42 },
-    { month: "Mai", ativos: 50, expirados: 7, renovados: 45 },
-    { month: "Jun", ativos: 52, expirados: 5, renovados: 48 },
-  ];
+  const processMonthlyData = () => {
+    const monthlyStats = new Map();
+    const months = [
+      "Jan",
+      "Fev",
+      "Mar",
+      "Abr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Set",
+      "Out",
+      "Nov",
+      "Dez",
+    ];
 
-  const valueData = [
-    { month: "Jan", valor: 150000 },
-    { month: "Fev", valor: 180000 },
-    { month: "Mar", valor: 160000 },
-    { month: "Abr", valor: 200000 },
-    { month: "Mai", valor: 220000 },
-    { month: "Jun", valor: 240000 },
-  ];
+    filteredContracts.forEach((contract) => {
+      const date = new Date(
+        contract["Data de Início"].split("/").reverse().join("-")
+      );
+      const month = months[date.getMonth()];
+
+      if (!monthlyStats.has(month)) {
+        monthlyStats.set(month, {
+          month,
+          ativos: 0,
+          expirados: 0,
+          renovados: 0,
+        });
+      }
+
+      const stats = monthlyStats.get(month);
+      if (contract.Status === "Ativo") stats.ativos++;
+      else if (contract.Status === "Expirado") stats.expirados++;
+      else if (contract.Status === "Pendente de Renovação") stats.renovados++;
+    });
+
+    return Array.from(monthlyStats.values());
+  };
+
+  const processValueData = () => {
+    const valueStats = new Map();
+    const months = [
+      "Jan",
+      "Fev",
+      "Mar",
+      "Abr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Set",
+      "Out",
+      "Nov",
+      "Dez",
+    ];
+
+    filteredContracts.forEach((contract) => {
+      const date = new Date(
+        contract["Data de Início"].split("/").reverse().join("-")
+      );
+      const month = months[date.getMonth()];
+
+      if (!valueStats.has(month)) {
+        valueStats.set(month, { month, valor: 0 });
+      }
+
+      const stats = valueStats.get(month);
+      const valor = parseFloat(
+        contract["Valor do Contrato"]
+          .replace("R$ ", "")
+          .replace(".", "")
+          .replace(",", ".")
+      );
+      stats.valor += valor;
+    });
+
+    return Array.from(valueStats.values());
+  };
+
+  const monthlyData = processMonthlyData();
+  const valueData = processValueData();
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
