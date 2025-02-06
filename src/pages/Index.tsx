@@ -7,7 +7,7 @@ import {
   PercentIcon,
   Plus,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { contracts as initialContracts } from "@/data/contracts";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { MetricCard } from "@/components/dashboard/MetricCard";
@@ -20,9 +20,11 @@ import { GlobalFilters } from "@/components/dashboard/GlobalFilters";
 import { FilterProvider } from "@/contexts/FilterContext";
 import { Contract } from "@/types/contract";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { parseCurrency } from "@/utils/currency";
+import { ContractsContext } from "@/contexts/ContractsContext";
 
 const Index = () => {
-  const [contracts, setContracts] = useState<Contract[]>(initialContracts);
+  const { contracts, addContract } = useContext(ContractsContext)!;
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState<Contract | null>(
     null
@@ -39,13 +41,7 @@ const Index = () => {
   const totalValue = contracts
     .filter((c) => c.Status === "Ativo")
     .reduce((acc, curr) => {
-      const value = parseFloat(
-        curr["Valor do Contrato"]
-          .replace("R$ ", "")
-          .replace(".", "")
-          .replace(",", ".")
-      );
-      return acc + value;
+      return acc + parseCurrency(curr["Valor do Contrato"]);
     }, 0);
 
   const expiredContracts = contracts.filter(
@@ -58,7 +54,7 @@ const Index = () => {
   const averageValue = (totalValue / activeContracts).toFixed(2);
 
   const handleAddContract = (newContract: Contract) => {
-    setContracts((prev) => [...prev, newContract]);
+    addContract(newContract);
   };
 
   const handleRowClick = (contract: Contract) => {

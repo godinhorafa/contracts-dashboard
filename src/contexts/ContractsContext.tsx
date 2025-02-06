@@ -1,13 +1,16 @@
 import { createContext, useContext, useState } from "react";
 import { Contract } from "@/types/contract";
 import { contracts as initialContracts } from "@/data/contracts";
+
 interface ContractsContextType {
   contracts: Contract[];
   addContract: (contract: Contract) => void;
 }
+
 const ContractsContext = createContext<ContractsContextType | undefined>(
   undefined
 );
+
 export function ContractsProvider({ children }: { children: React.ReactNode }) {
   // Tenta recuperar contratos do localStorage ou usa os iniciais
   const [contracts, setContracts] = useState<Contract[]>(() => {
@@ -28,6 +31,7 @@ export function ContractsProvider({ children }: { children: React.ReactNode }) {
     </ContractsContext.Provider>
   );
 }
+
 export function useContracts() {
   const context = useContext(ContractsContext);
   if (context === undefined) {
@@ -35,3 +39,5 @@ export function useContracts() {
   }
   return context;
 }
+
+export { ContractsContext };

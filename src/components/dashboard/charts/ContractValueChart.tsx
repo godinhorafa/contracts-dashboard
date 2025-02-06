@@ -9,6 +9,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { Contract } from "@/types/contract";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ContractValueChartProps {
   data: Array<{
@@ -18,6 +20,8 @@ interface ContractValueChartProps {
 }
 
 const ContractValueChart = ({ data }: ContractValueChartProps) => {
+  const isMobile = useIsMobile();
+
   // Encontrar o valor máximo para definir o domínio do eixo Y
   const maxValue = Math.max(...data.map((item) => item.valor));
   const yAxisDomain = [0, Math.ceil(maxValue * 1.1)]; // Adiciona 10% de margem
@@ -28,14 +32,15 @@ const ContractValueChart = ({ data }: ContractValueChartProps) => {
         <CardTitle>Valor Total dos Contratos</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={"h-[300px]"}>
+        <div className={isMobile ? "h-[200px]" : "h-[300px]"}>
           <ChartContainer
             config={{
               valor: { theme: { light: "#1E40AF", dark: "#60A5FA" } },
             }}
+            className="w-full h-full"
           >
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data}>
+              <LineChart data={data} className="max-w-full max-h-full">
                 <XAxis dataKey="month" />
                 <YAxis
                   domain={yAxisDomain}

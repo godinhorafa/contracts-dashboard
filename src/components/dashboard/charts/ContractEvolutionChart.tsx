@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 import { Contract } from "@/types/contract";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ContractEvolutionChartProps {
   data: Array<{
@@ -15,21 +16,24 @@ interface ContractEvolutionChartProps {
 export const ContractEvolutionChart = ({
   data,
 }: ContractEvolutionChartProps) => {
+  const isMobile = useIsMobile();
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Evolução de Contratos</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className={isMobile ? "h-[200px]" : "h-[300px]"}>
           <ChartContainer
             config={{
               ativos: { theme: { light: "#1E40AF", dark: "#60A5FA" } },
               expirados: { theme: { light: "#DC2626", dark: "#EF4444" } },
               renovados: { theme: { light: "#059669", dark: "#34D399" } },
             }}
+            className="w-full h-full"
           >
-            <BarChart data={data}>
+            <BarChart data={data} className="max-w-full max-h-full">
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip
