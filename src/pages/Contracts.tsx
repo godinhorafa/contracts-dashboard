@@ -1,9 +1,12 @@
-import { contracts } from "@/data/contracts";
+import { useContracts } from "@/contexts/ContractsContext";
 import { ContractsTable } from "@/components/dashboard/ContractsTable";
 import { FilterProvider } from "@/contexts/FilterContext";
 import { GlobalFilters } from "@/components/dashboard/GlobalFilters";
 import { Sidebar } from "@/components/dashboard/Sidebar";
+
 const Contracts = () => {
+  const { contracts } = useContracts();
+
   return (
     <FilterProvider>
       <div className="flex h-screen bg-gray-50">

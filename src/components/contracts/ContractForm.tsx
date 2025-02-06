@@ -18,8 +18,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ContractStatus, ContractType } from "@/types/contract";
 import { formatCurrency, parseCurrency } from "@/utils/currency";
+import { formatDateToBrazilian } from "@/utils/formatters";
 
 const contractFormSchema = z.object({
   Identificador: z.string().min(1, "Identificador é obrigatório"),
@@ -55,9 +55,10 @@ export function ContractForm({ onSubmit, onCancel }: ContractFormProps) {
   });
 
   const handleSubmit = (data: ContractFormValues) => {
-    // Format the currency value before submitting
     const formattedData = {
       ...data,
+      "Data de Início": formatDateToBrazilian(data["Data de Início"]),
+      "Data de Vencimento": formatDateToBrazilian(data["Data de Vencimento"]),
       "Valor do Contrato": formatCurrency(
         parseCurrency(data["Valor do Contrato"])
       ),

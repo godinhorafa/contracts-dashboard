@@ -1,7 +1,7 @@
 import { Contract } from "@/types/contract";
 import { useFilters } from "@/contexts/FilterContext";
 import { ContractEvolutionChart } from "./charts/ContractEvolutionChart";
-import { ContractValueChart } from "./charts/ContractValueChart";
+import ContractValueChart from "./charts/ContractValueChart";
 import {
   processMonthlyData,
   processValueData,

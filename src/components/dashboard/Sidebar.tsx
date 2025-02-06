@@ -1,9 +1,11 @@
 import { Home, FileText, Settings, Menu } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const isMobile = useIsMobile();
 
   const menuItems = [
     { icon: Home, label: "Dashboard", href: "/" },
@@ -14,22 +16,27 @@ export const Sidebar = () => {
   return (
     <div
       className={cn(
-        "h-screen bg-white border-r border-gray-200 transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
+        "bg-white border-gray-200 transition-all duration-300",
+        isMobile
+          ? "w-full h-auto border-b"
+          : cn("h-screen border-r", collapsed ? "w-16" : "w-64")
       )}
     >
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        {!collapsed && (
+        {(!collapsed || isMobile) && (
           <h1 className="text-xl font-bold text-primary">Contratos</h1>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-gray-100"
+          className={cn(
+            "p-2 rounded-lg hover:bg-gray-100",
+            isMobile && "ml-auto"
+          )}
         >
           <Menu size={20} />
         </button>
       </div>
-      <nav className="p-4">
+      <nav className={cn("p-4", isMobile && (collapsed ? "hidden" : "block"))}>
         {menuItems.map((item) => (
           <a
             key={item.label}
@@ -37,7 +44,7 @@ export const Sidebar = () => {
             className="flex items-center gap-4 p-2 rounded-lg hover:bg-gray-100 mb-2"
           >
             <item.icon size={20} />
-            {!collapsed && <span>{item.label}</span>}
+            {(!collapsed || isMobile) && <span>{item.label}</span>}
           </a>
         ))}
       </nav>

@@ -19,6 +19,7 @@ import { ContractDetailsModal } from "@/components/contracts/ContractDetailsModa
 import { GlobalFilters } from "@/components/dashboard/GlobalFilters";
 import { FilterProvider } from "@/contexts/FilterContext";
 import { Contract } from "@/types/contract";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const [contracts, setContracts] = useState<Contract[]>(initialContracts);
@@ -27,6 +28,7 @@ const Index = () => {
     null
   );
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   // Cálculos das métricas
   const totalContracts = contracts.length;
@@ -46,7 +48,6 @@ const Index = () => {
       return acc + value;
     }, 0);
 
-  // Cálculo da taxa de renovação
   const expiredContracts = contracts.filter(
     (c) => c.Status === "Expirado"
   ).length;
@@ -54,8 +55,6 @@ const Index = () => {
     (activeContracts / (activeContracts + expiredContracts)) *
     100
   ).toFixed(1);
-
-  // Cálculo do valor médio dos contratos
   const averageValue = (totalValue / activeContracts).toFixed(2);
 
   const handleAddContract = (newContract: Contract) => {
@@ -69,12 +68,14 @@ const Index = () => {
 
   return (
     <FilterProvider>
-      <div className="flex h-screen bg-gray-50">
+      <div className="flex md:flex-row flex-col min-h-screen bg-gray-50">
         <Sidebar />
-        <main className="flex-1 p-8 overflow-auto">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <h1 className="text-3xl font-bold">Dashboard de Contratos</h1>
+        <main className="flex-1 p-4 md:p-8 overflow-auto">
+          <div className="max-w-7xl mx-auto space-y-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 md:mb-8">
+              <h1 className="text-2xl md:text-3xl font-bold">
+                Dashboard de Contratos
+              </h1>
               <Button onClick={() => setIsAddModalOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar Contrato
@@ -83,7 +84,7 @@ const Index = () => {
 
             <GlobalFilters />
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               <MetricCard
                 title="Total de Contratos"
                 value={totalContracts}
@@ -128,11 +129,11 @@ const Index = () => {
               />
             </div>
 
-            <div className="mb-8">
+            <div className="mb-6">
               <DashboardCharts contracts={contracts} />
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow p-4 md:p-6 overflow-x-auto">
               <h2 className="text-xl font-semibold mb-4">Lista de Contratos</h2>
               <ContractsTable
                 contracts={contracts}
